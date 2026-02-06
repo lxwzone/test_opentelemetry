@@ -1,0 +1,4 @@
+com\example\dataqueryservice\service\$MockDataServiceTest$Definition.class
+com\example\dataqueryservice\service\$MockDataServiceTest$Definition$Exec.class
+META-INF\micronaut\io.micronaut.inject.BeanDefinitionReference\com.example.dataqueryservice.service.$MockDataServiceTest$Definition
+com\example\dataqueryservice\service\MockDataServiceTest.class

@@ -1,0 +1,50 @@
+-------------------------------------------------------------------------------
+Test set: com.example.tokenservice.controller.TokenControllerTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.123 s <<< FAILURE! -- in com.example.tokenservice.controller.TokenControllerTest
+com.example.tokenservice.controller.TokenControllerTest.testTokenControllerInitialization -- Time elapsed: 0.112 s <<< ERROR!
+io.micronaut.context.exceptions.BeanInstantiationException: 
+Error instantiating bean of type  [com.example.tokenservice.controller.$TokenController$Definition$Intercepted]
+
+Path Taken: TokenControllerTest.tokenController --> new $TokenController$Definition$Intercepted(JwtTokenService jwtTokenService,[ClientService clientService],CallbackDeliveryService callbackDeliveryService,BeanResolutionContext $beanResolutionContext,BeanContext $beanContext,Qualifier $qualifier,List<BeanRegistration<Interceptor T> E> $interceptors,InterceptorRegistry $interceptorRegistry)
+	at io.micronaut.context.DefaultBeanContext.resolveByBeanFactory(DefaultBeanContext.java:2349)
+	at io.micronaut.context.DefaultBeanContext.doCreateBean(DefaultBeanContext.java:2304)
+	at io.micronaut.context.DefaultBeanContext.doCreateBean(DefaultBeanContext.java:2316)
+	at io.micronaut.context.DefaultBeanContext.createRegistration(DefaultBeanContext.java:3127)
+	at io.micronaut.context.SingletonScope.getOrCreate(SingletonScope.java:80)
+	at io.micronaut.context.DefaultBeanContext.findOrCreateSingletonBeanRegistration(DefaultBeanContext.java:3029)
+	at io.micronaut.context.DefaultBeanContext.resolveBeanRegistration(DefaultBeanContext.java:2990)
+	at io.micronaut.context.DefaultBeanContext.resolveBeanRegistration(DefaultBeanContext.java:2756)
+	at io.micronaut.context.DefaultBeanContext.getBean(DefaultBeanContext.java:1745)
+	at io.micronaut.context.AbstractBeanResolutionContext.getBean(AbstractBeanResolutionContext.java:89)
+	at io.micronaut.context.AbstractInitializableBeanDefinition.resolveBean(AbstractInitializableBeanDefinition.java:2188)
+	at io.micronaut.context.AbstractInitializableBeanDefinition.getBeanForConstructorArgument(AbstractInitializableBeanDefinition.java:1350)
+	at com.example.tokenservice.controller.$TokenController$Definition$Intercepted$Definition.instantiate(Unknown Source)
+	at io.micronaut.context.DefaultBeanContext.resolveByBeanFactory(DefaultBeanContext.java:2334)
+	at io.micronaut.context.DefaultBeanContext.doCreateBean(DefaultBeanContext.java:2304)
+	at io.micronaut.context.DefaultBeanContext.doCreateBean(DefaultBeanContext.java:2316)
+	at io.micronaut.context.DefaultBeanContext.createRegistration(DefaultBeanContext.java:3127)
+	at io.micronaut.context.SingletonScope.getOrCreate(SingletonScope.java:80)
+	at io.micronaut.context.DefaultBeanContext.findOrCreateSingletonBeanRegistration(DefaultBeanContext.java:3029)
+	at io.micronaut.context.DefaultBeanContext.resolveBeanRegistration(DefaultBeanContext.java:2990)
+	at io.micronaut.context.DefaultBeanContext.resolveBeanRegistration(DefaultBeanContext.java:2756)
+	at io.micronaut.context.DefaultBeanContext.getBean(DefaultBeanContext.java:1745)
+	at io.micronaut.context.AbstractBeanResolutionContext.getBean(AbstractBeanResolutionContext.java:89)
+	at io.micronaut.context.AbstractInitializableBeanDefinition.resolveBean(AbstractInitializableBeanDefinition.java:2188)
+	at io.micronaut.context.AbstractInitializableBeanDefinition.getBeanForField(AbstractInitializableBeanDefinition.java:1694)
+	at com.example.tokenservice.controller.$TokenControllerTest$Definition.inject(Unknown Source)
+	at io.micronaut.context.DefaultBeanContext.doInjectAndInitialize(DefaultBeanContext.java:2661)
+	at io.micronaut.context.DefaultBeanContext.inject(DefaultBeanContext.java:1009)
+	at io.micronaut.test.extensions.AbstractMicronautExtension.beforeEach(AbstractMicronautExtension.java:459)
+	at io.micronaut.test.extensions.junit5.MicronautJunit5Extension.beforeEach(MicronautJunit5Extension.java:223)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+Caused by: java.lang.NullPointerException
+	at java.base/java.util.concurrent.ConcurrentHashMap.putVal(ConcurrentHashMap.java:1011)
+	at java.base/java.util.concurrent.ConcurrentHashMap.put(ConcurrentHashMap.java:1006)
+	at com.example.tokenservice.service.ClientService.initializePreRegisteredClient(ClientService.java:40)
+	at com.example.tokenservice.service.ClientService.<init>(ClientService.java:30)
+	at com.example.tokenservice.service.$ClientService$Definition.instantiate(Unknown Source)
+	at io.micronaut.context.DefaultBeanContext.resolveByBeanFactory(DefaultBeanContext.java:2334)
+	... 31 more
+

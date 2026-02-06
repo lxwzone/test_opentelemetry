@@ -1,0 +1,4 @@
+META-INF\micronaut\io.micronaut.inject.BeanDefinitionReference\com.example.tokenservice.service.$JwtTokenServiceTest$Definition
+com\example\tokenservice\service\$JwtTokenServiceTest$Definition$Exec.class
+com\example\tokenservice\service\JwtTokenServiceTest.class
+com\example\tokenservice\service\$JwtTokenServiceTest$Definition.class
