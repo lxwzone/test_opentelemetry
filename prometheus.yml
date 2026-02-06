@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'token-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['token-service:8081']
+  - job_name: 'data-query-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['data-query-service:8080']
+  - job_name: 'data-client-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['data-client-service:8082']

@@ -1,0 +1,77 @@
+micronaut:
+  application:
+    name: data-client-service
+  server:
+    port: 8082
+  http:
+    client:
+      read-timeout: 30s
+      connect-timeout: 10s
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /swagger/**
+      swagger-ui:
+        paths: classpath:META-INF/swagger/views/swagger-ui
+        mapping: /swagger-ui/**
+  tracing:
+    jaeger:
+      enabled: true
+      sampler:
+        probability: 1.0
+      sender:
+        agent-host: ${JAEGER_AGENT_HOST:localhost}
+        agent-port: ${JAEGER_AGENT_PORT:6831}
+  metrics:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+        step: PT1M
+        descriptions: true
+  management:
+    health:
+      enabled: true
+    endpoints:
+      enabled: true
+      sensitive: false
+  openapi:
+    enabled: true
+    swagger-ui:
+      enabled: true
+      path: /swagger-ui
+
+jackson:
+  serialization:
+    write-dates-as-timestamps: false
+  time-zone: UTC
+
+client:
+  token:
+    service:
+      url: ${TOKEN_SERVICE_URL:http://localhost:8081}
+      client-id: ${CLIENT_ID:data-client-service}
+      client-secret: ${CLIENT_SECRET:secret123}
+      scope: read write
+      refresh-before-expiration: 300
+  data-query:
+    service:
+      url: ${DATA_QUERY_SERVICE_URL:http://localhost:8080}
+  circuit-breaker:
+    failure-threshold: 5
+    success-threshold: 2
+    timeout: 10s
+    reset-timeout: 60s
+  retry:
+    max-attempts: 3
+    initial-delay: 1s
+    multiplier: 2.0
+    max-delay: 10s
+
+logging:
+  level:
+    com.example.dataclientservice: DEBUG
+    io.micronaut: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId},%X{spanId}] [%thread] %-5level %logger{36} - %msg%n"

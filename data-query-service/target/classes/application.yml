@@ -1,0 +1,68 @@
+micronaut:
+  application:
+    name: data-query-service
+  server:
+    port: 8080
+  security:
+    enabled: true
+    token:
+      jwt:
+        enabled: true
+        signatures:
+          secret:
+            generator:
+              secret: ${JWT_SECRET:pleaseChangeThisSecretForASecretKeyForJWTTokenGeneration}
+              jws-algorithm: HS256
+          validation:
+            enabled: true
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /swagger/**
+      swagger-ui:
+        paths: classpath:META-INF/swagger/views/swagger-ui
+        mapping: /swagger-ui/**
+  tracing:
+    jaeger:
+      enabled: true
+      sampler:
+        probability: 1.0
+      sender:
+        agent-host: ${JAEGER_AGENT_HOST:localhost}
+        agent-port: ${JAEGER_AGENT_PORT:6831}
+  metrics:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+        step: PT1M
+        descriptions: true
+  management:
+    health:
+      enabled: true
+    endpoints:
+      enabled: true
+      sensitive: false
+  openapi:
+    enabled: true
+    swagger-ui:
+      enabled: true
+      path: /swagger-ui
+
+jackson:
+  serialization:
+    write-dates-as-timestamps: false
+  time-zone: UTC
+
+data:
+  query:
+    mock:
+      enabled: true
+
+logging:
+  level:
+    com.example.dataqueryservice: DEBUG
+    io.micronaut: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId},%X{spanId}] [%thread] %-5level %logger{36} - %msg%n"
