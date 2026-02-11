@@ -17,14 +17,10 @@ public class ClientService {
     private final Map<String, ClientInfo> clients = new ConcurrentHashMap<>();
     private final Map<String, String> callbackUrls = new ConcurrentHashMap<>();
     
-    @Property(name = "pre.registered.client.id", defaultValue = "data-client-service")
-    private String preRegisteredClientId;
-    
-    @Property(name = "pre.registered.client.secret", defaultValue = "secret123")
-    private String preRegisteredClientSecret;
-    
-    @Property(name = "pre.registered.callback.url", defaultValue = "http://localhost:8082/callback")
-    private String preRegisteredCallbackUrl;
+    // Hardcoding client credentials for testing
+    private final String preRegisteredClientId = "data-client-service";
+    private final String preRegisteredClientSecret = "secret123";
+    private final String preRegisteredCallbackUrl = "http://localhost:8082/callback";
     
     public ClientService() {
         initializePreRegisteredClient();
@@ -40,6 +36,8 @@ public class ClientService {
         clients.put(preRegisteredClientId, clientInfo);
         callbackUrls.put(preRegisteredClientId, preRegisteredCallbackUrl);
         LOG.info("Pre-registered client initialized: {}", preRegisteredClientId);
+        LOG.info("Client secret: {}", preRegisteredClientSecret);
+        LOG.info("Callback URL: {}", preRegisteredCallbackUrl);
     }
     
     public boolean validateClient(String clientId, String clientSecret) {

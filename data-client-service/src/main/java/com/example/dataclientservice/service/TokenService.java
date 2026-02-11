@@ -15,6 +15,7 @@ import org.slf4j.MDC;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class TokenService {
@@ -64,20 +65,37 @@ public class TokenService {
                     return tokenInfo.getAccessToken();
                 }
                 
-                TokenResponse tokenResponse = fetchNewToken(traceId);
-                if (tokenResponse != null) {
-                    long expirationTime = System.currentTimeMillis() + (tokenResponse.getExpiresIn() * 1000);
-                    tokenInfo = new TokenInfo(tokenResponse.getAccessToken(), expirationTime);
-                    tokenCache.put(clientId, tokenInfo);
-                    LOG.info("New token acquired for client: {}, expires at: {}, traceId: {}", 
-                            clientId, expirationTime, traceId);
-                    return tokenResponse.getAccessToken();
+                // Initiate token request (will be delivered via callback)
+                fetchNewToken(traceId);
+                
+                // Wait a short time for callback to arrive
+                // This is a simplified approach for testing
+                // In a production environment, you might want to use a more robust mechanism
+                int maxWaitAttempts = 10;
+                int waitAttempts = 0;
+                
+                while (waitAttempts < maxWaitAttempts) {
+                    waitAttempts++;
+                    TimeUnit.MILLISECONDS.sleep(500); // Wait 500ms
+                    
+                    tokenInfo = tokenCache.get(clientId);
+                    if (tokenInfo != null) {
+                        LOG.info("Token received via callback and stored, expires at: {}, traceId: {}", 
+                                tokenInfo.getExpirationTime(), traceId);
+                        return tokenInfo.getAccessToken();
+                    }
+                    
+                    LOG.debug("Waiting for token delivery via callback, attempt: {}, traceId: {}", 
+                            waitAttempts, traceId);
                 }
+                
+                LOG.error("Token delivery via callback timed out after {} attempts, traceId: {}", 
+                        maxWaitAttempts, traceId);
             } finally {
                 tokenLock.unlock();
             }
             
-            throw new RuntimeException("Failed to acquire access token");
+            throw new RuntimeException("Failed to acquire access token - callback delivery timed out");
         } catch (Exception e) {
             LOG.error("Error getting access token for client: {}, traceId: {}", clientId, traceId, e);
             throw new RuntimeException("Failed to acquire access token", e);
@@ -98,17 +116,19 @@ public class TokenService {
             TokenRequest tokenRequest = new TokenRequest(clientId, clientSecret, "client_credentials", scope);
             
             HttpRequest<TokenRequest> request = HttpRequest.POST("/oauth/token", tokenRequest);
-            HttpResponse<TokenResponse> response = tokenServiceClient.toBlocking().exchange(request, TokenResponse.class);
+            HttpResponse<String> response = tokenServiceClient.toBlocking().exchange(request, String.class);
             
             if (response.getStatus().getCode() >= 200 && response.getStatus().getCode() < 300) {
-                LOG.info("Successfully fetched new token from token service, traceId: {}", traceId);
-                return response.body();
+                LOG.info("Token request initiated successfully, token will be delivered via callback, traceId: {}", traceId);
+                // Token will be delivered via callback, return null for now
+                // The actual token will be stored via storeTokenFromCallback method
+                return null;
             } else {
-                LOG.error("Failed to fetch token, status: {}, traceId: {}", response.getStatus().getCode(), traceId);
+                LOG.error("Failed to initiate token request, status: {}, traceId: {}", response.getStatus().getCode(), traceId);
                 return null;
             }
         } catch (Exception e) {
-            LOG.error("Exception while fetching token, traceId: {}", traceId, e);
+            LOG.error("Exception while initiating token request, traceId: {}", traceId, e);
             return null;
         }
     }
@@ -120,6 +140,23 @@ public class TokenService {
         try {
             tokenCache.remove(clientId);
             LOG.info("Token invalidated for client: {}, traceId: {}", clientId, traceId);
+        } finally {
+            MDC.remove("traceId");
+        }
+    }
+    
+    public void storeTokenFromCallback(TokenResponse tokenResponse) {
+        String traceId = UUID.randomUUID().toString();
+        MDC.put("traceId", traceId);
+        
+        try {
+            long expirationTime = System.currentTimeMillis() + (tokenResponse.getExpiresIn() * 1000);
+            TokenInfo tokenInfo = new TokenInfo(tokenResponse.getAccessToken(), expirationTime);
+            tokenCache.put(clientId, tokenInfo);
+            LOG.info("Token stored from callback for client: {}, expires at: {}, traceId: {}", 
+                    clientId, expirationTime, traceId);
+        } catch (Exception e) {
+            LOG.error("Error storing token from callback for client: {}, traceId: {}", clientId, traceId, e);
         } finally {
             MDC.remove("traceId");
         }

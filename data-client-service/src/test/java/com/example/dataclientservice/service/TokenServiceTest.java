@@ -45,7 +45,7 @@ class TokenServiceTest {
         TokenResponse mockResponse = new TokenResponse();
         mockResponse.setAccessToken("test-access-token");
         mockResponse.setTokenType("Bearer");
-        mockResponse.setExpiresIn(3600);
+        mockResponse.setExpiresIn(3600L);
 
         HttpResponse<TokenResponse> httpResponse = mock(HttpResponse.class);
         when(httpResponse.getStatus().getCode()).thenReturn(200);
@@ -87,7 +87,7 @@ class TokenServiceTest {
         TokenResponse mockResponse = new TokenResponse();
         mockResponse.setAccessToken("cached-token");
         mockResponse.setTokenType("Bearer");
-        mockResponse.setExpiresIn(3600);
+        mockResponse.setExpiresIn(3600L);
 
         HttpResponse<TokenResponse> httpResponse = mock(HttpResponse.class);
         when(httpResponse.getStatus().getCode()).thenReturn(200);
